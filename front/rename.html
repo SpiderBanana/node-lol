@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Champion</title>
+</head>
+<body>
+    <form onsubmit="event.preventDefault(); updateChampion()">
+        <input type="text" name="championName" placeholder="New Champion Name">
+        <select name="championType">
+            <option value="Fighter">Fighter</option>
+            <option value="Assassin">Assassin</option>
+            <option value="Mage">Mage</option>
+            <option value="Marksman">Marksman</option>
+            <option value="Support">Support</option>
+            <option value="Tank">Tank</option>
+        </select>
+        <button type="submit">Update Champion</button>
+    </form>
+
+    <script>
+        const url = window.location.search;
+        const id = new URLSearchParams(url).get('id');
+
+        fetch(`http://localhost:3000/champions/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('input[name="championName"]').value = data.name;
+                document.querySelector('select[name="championType"]').value = data.type;
+            });
+
+        const updateChampion = async () => {
+            const name = document.querySelector('input[name="championName"]').value;
+            const type = document.querySelector('select[name="championType"]').value;
+            await fetch(`http://localhost:3000/champions/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, type })
+            });
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

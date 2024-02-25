@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Champions List</title>
+</head>
+<body>
+    <form onsubmit="event.preventDefault(); sendChampion()">
+        <input type="text" name="championName" placeholder="Champion Name">
+        <select name="championType">
+            <option value="Fighter">Fighter</option>
+            <option value="Assassin">Assassin</option>
+            <option value="Mage">Mage</option>
+            <option value="Marksman">Marksman</option>
+            <option value="Support">Support</option>
+            <option value="Tank">Tank</option>
+        </select>
+        <button type="submit">Create New Champion</button>
+    </form>
+    <h1>List of Champions</h1>
+    <div id='champions'></div>
+    <script>
+        fetch('http://localhost:3000/champions')
+        .then(response => response.json())
+        .then(data => {
+            const championsDiv = document.querySelector('#champions');
+            data.forEach(champion => {
+                championsDiv.innerHTML += `
+                <a href="champion.html?id=${champion.id}">
+                    <h2>${champion.name} - ${champion.type}</h2>
+                </a>
+                `;
+            });
+        });
+
+        const sendChampion = async () => {
+            const name = document.querySelector('input[name="championName"]').value;
+            const type = document.querySelector('select[name="championType"]').value;
+            await fetch('http://localhost:3000/champions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, type })
+            });
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
